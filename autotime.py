@@ -1,5 +1,13 @@
 """Ipython Cell Magic - Addons Functions.
 
+Features
+
+    * prints time for each cell execution
+    * For cell took more than 100 Seconds
+        * show start_time & end_time in human readable format
+        * gives a beep sound
+            * if you are using ITERM - you might see a notication also.
+
 Usage: Execute following in you Ipython Notebook
 
     * To load `%load autotime`
@@ -9,6 +17,7 @@ Usage: Execute following in you Ipython Notebook
 from __future__ import print_function
 
 import time
+from os import system
 from IPython.core.magics.execution import _format_time as format_delta
 
 
@@ -32,8 +41,19 @@ class LineWatcher(object):
         """Show results."""
         if self.start_time:
             diff = time.time() - self.start_time
+            epoch_start_time = pretty_date_time(self.start_time)
+            epoch_end_time = pretty_date_time(time.time())
             assert diff > 0
+            if diff > 100:
+                print('duration:', epoch_start_time, "\t<->\t", epoch_end_time)
+                # print('\a')
+                system("tput bel")
             print('time: %s' % format_delta(diff))
+
+
+def pretty_date_time(epoch_time):
+    """Return a human readable datetime."""
+    return (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(epoch_time)))
 
 
 timer = LineWatcher()
