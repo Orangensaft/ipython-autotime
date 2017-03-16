@@ -1,3 +1,11 @@
+"""Ipython Cell Magic - Addons Functions.
+
+Usage: Execute following in you Ipython Notebook
+
+    * To load `%load autotime`
+    * To unload `%unload autotime`
+    * To reload `%reload autotime`
+"""
 from __future__ import print_function
 
 import time
@@ -5,7 +13,6 @@ from IPython.core.magics.execution import _format_time as format_delta
 
 
 class LineWatcher(object):
-
     """Class that implements a basic timer.
 
     Notes
@@ -14,25 +21,31 @@ class LineWatcher(object):
     """
 
     def __init__(self):
+        """Initialise params."""
         self.start_time = 0.0
 
     def start(self):
+        """Set start_time."""
         self.start_time = time.time()
 
     def stop(self):
+        """Show results."""
         if self.start_time:
             diff = time.time() - self.start_time
             assert diff > 0
             print('time: %s' % format_delta(diff))
 
+
 timer = LineWatcher()
 
 
 def load_ipython_extension(ip):
+    """Register the cell execution start."""
     ip.events.register('pre_run_cell', timer.start)
     ip.events.register('post_run_cell', timer.stop)
 
 
 def unload_ipython_extension(ip):
+    """Register the cell execution end."""
     ip.events.unregister('pre_run_cell', timer.start)
     ip.events.unregister('post_run_cell', timer.stop)
